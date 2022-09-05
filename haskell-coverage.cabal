@@ -1,0 +1,47 @@
+cabal-version:      3.4
+name:               haskell-coverage
+version:            0.1.0.0
+synopsis:
+    Translate Haskell HPC format into various code coverage formats
+
+-- description:
+license:            MIT
+license-file:       LICENSE
+author:             Nick Suchecki
+maintainer:         nicksuchecki@gmail.com
+copyright:          Nick Suchecki
+category:           Testing
+build-type:         Simple
+extra-doc-files:    CHANGELOG.md
+
+common warnings
+    ghc-options: -Wall
+
+library
+    import:           warnings
+    exposed-modules:  MyLib
+    -- other-modules:
+    -- other-extensions:
+    build-depends:    base ^>=4.16.3.0
+    hs-source-dirs:   src
+    default-language: GHC2021
+
+executable haskell-coverage
+    import:           warnings
+    main-is:          Main.hs
+    build-depends:
+        base ^>=4.16.3.0,
+        haskell-coverage
+
+    hs-source-dirs:   app
+    default-language: GHC2021
+
+test-suite haskell-coverage-test
+    import:           warnings
+    default-language: GHC2021
+    type:             exitcode-stdio-1.0
+    hs-source-dirs:   test
+    main-is:          Main.hs
+    build-depends:
+        base ^>=4.16.3.0,
+        haskell-coverage
