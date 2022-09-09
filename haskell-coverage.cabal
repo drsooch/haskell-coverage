@@ -19,29 +19,53 @@ common warnings
 
 library
     import:           warnings
-    exposed-modules:  MyLib
-    -- other-modules:
-    -- other-extensions:
-    build-depends:    base ^>=4.16.3.0
+    exposed-modules:  
+        Test.Coverage
+        Test.Coverage.Arguments
+    other-modules:
+        Test.Coverage.Format
+        Test.Coverage.Format.Coveralls
+        Test.Coverage.Format.Codecov
+--        Test.Coverage.BuildTool
+
+    build-depends:
+        base                    ^>=4.16.3.0
+        , bytestring
+        , Cabal
+        , directory             ^>=1.3
+        , filepath              ^>=1.4
+        , hpc
+        , optparse-applicative  ^>=0.17
+        , typed-process         ^>=0.2
+
     hs-source-dirs:   src
     default-language: GHC2021
+    default-extensions:
+        LambdaCase
 
 executable haskell-coverage
     import:           warnings
     main-is:          Main.hs
     build-depends:
-        base ^>=4.16.3.0,
-        haskell-coverage
+        base ^>=4.16.3.0
+        , haskell-coverage
+        , optparse-applicative  ^>=0.17
 
     hs-source-dirs:   app
     default-language: GHC2021
+    default-extensions:
+        LambdaCase
 
 test-suite haskell-coverage-test
     import:           warnings
-    default-language: GHC2021
     type:             exitcode-stdio-1.0
-    hs-source-dirs:   test
     main-is:          Main.hs
+
     build-depends:
         base ^>=4.16.3.0,
         haskell-coverage
+
+    hs-source-dirs:   test
+    default-language: GHC2021
+    default-extensions:
+        LambdaCase
