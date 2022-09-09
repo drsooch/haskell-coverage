@@ -26,6 +26,8 @@ library
         Test.Coverage.Format
         Test.Coverage.Format.Coveralls
         Test.Coverage.Format.Codecov
+        Test.Coverage.Hpc
+        Test.Coverage.Provider
 --        Test.Coverage.BuildTool
 
     build-depends:
@@ -41,6 +43,7 @@ library
     hs-source-dirs:   src
     default-language: GHC2021
     default-extensions:
+        OverloadedStrings
         LambdaCase
 
 executable haskell-coverage
