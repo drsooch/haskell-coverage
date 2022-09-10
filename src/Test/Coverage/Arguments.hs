@@ -1,14 +1,12 @@
 -- | Command Line Arguments for Haskell-Coverage
 module Test.Coverage.Arguments (Arguments(..), argParser) where
 
-import           Control.Applicative       ((<**>))
-import           Data.Char                 (toLower)
-import           Options.Applicative       (Parser, ParserInfo, ReadM, fullDesc,
-                                            help, info, long, metavar, option,
-                                            progDesc, readerError, short, str,
-                                            strOption)
-import           Options.Applicative.Extra (helper)
-import           Test.Coverage.Format      (CoverageFormat (..))
+import           Data.Char            (toLower)
+import           Options.Applicative  (Parser, ParserInfo, ReadM, fullDesc,
+                                       help, helper, info, long, metavar,
+                                       option, progDesc, readerError, short,
+                                       str, strOption, (<**>))
+import           Test.Coverage.Format (CoverageFormat (..))
 
 data Arguments = Arguments { tixPath      :: FilePath
                            , mixPath      :: FilePath
