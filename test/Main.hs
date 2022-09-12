@@ -1,4 +1,8 @@
-module Main (main) where
+module Main where
+
+import qualified CoverageTest
+import qualified HpcTest
+import           Test.Tasty
 
 main :: IO ()
-main = putStrLn "Test suite not yet implemented."
+main = defaultMain $ testGroup "Haskell-Coverage" [HpcTest.tests, CoverageTest.tests]
