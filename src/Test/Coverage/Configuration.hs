@@ -1,5 +1,5 @@
--- | Command Line Arguments for Haskell-Coverage
-module Test.Coverage.Arguments (Arguments(..), argParser) where
+-- | Configuration for Haskell-Coverage
+module Test.Coverage.Configuration (Configuration(..), configurationParser) where
 
 import           Data.Char            (toLower)
 import           Options.Applicative  (Parser, ParserInfo, ReadM, fullDesc,
@@ -8,13 +8,13 @@ import           Options.Applicative  (Parser, ParserInfo, ReadM, fullDesc,
                                        str, strOption, (<**>))
 import           Test.Coverage.Format (CoverageFormat (..))
 
-data Arguments = Arguments { tixPath      :: FilePath
-                           , mixPath      :: FilePath
-                           , outputFormat :: CoverageFormat
-                           } deriving Show
+data Configuration = Configuration { tixPath      :: FilePath
+                                   , mixPath      :: FilePath
+                                   , outputFormat :: CoverageFormat
+                                   } deriving Show
 
-arguments :: Parser Arguments
-arguments = Arguments <$>
+configuration :: Parser Configuration
+configuration = Configuration <$>
   strOption
         ( long "tix-path"
         <> short 't'
@@ -31,8 +31,8 @@ arguments = Arguments <$>
         <> metavar "FORMAT_TYPE"
         <> help "Code Coverage format")
 
-argParser :: ParserInfo Arguments
-argParser = info (arguments <**> helper) (fullDesc <> progDesc "Translate HPC into various Code Coverage Formats")
+configurationParser :: ParserInfo Configuration
+configurationParser = info (configuration <**> helper) (fullDesc <> progDesc "Translate HPC into various Code Coverage Formats")
 
 coverageFormatParser :: ReadM CoverageFormat
 coverageFormatParser = map toLower <$> str >>= \case

@@ -1,12 +1,12 @@
 module Main where
 
 import           Options.Applicative
-import           Test.Coverage.Arguments (argParser)
+import           Test.Coverage.Configuration
 
 main :: IO ()
 main = do
-  args <- execParser argParser
-  print args
+  config <- execParser configurationParser
+  print config
   -- find out if this is a stack or cabal package
   print "Stack or Cabal"
   -- find the tix file(s)
