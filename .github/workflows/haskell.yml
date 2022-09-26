@@ -45,5 +45,5 @@ jobs:
       run: cabal install --overwrite-policy=always
     - name: Send Coveralls data
       run: |
-        haskell-coverage coveralls $COVERALLS_TOKEN -o coverage.json -m ./dist-newstyle/build/x86_64-linux/ghc-9.2.4/haskell-coverage-0.1.0.0/hpc/vanilla/mix/haskell-coverage-0.1.0.0/ -t ./dist-newstyle/build/x86_64-linux/ghc-9.2.4/haskell-coverage-0.1.0.0/t/haskell-coverage-test/hpc/vanilla/tix/haskell-coverage-0.1.0.0/haskell-coverage-0.1.0.0.tix
+        $HOME/.cabal/bin/haskell-coverage coveralls ${{ secrets.COVERALLS_TOKEN }} -o coverage.json -m ./dist-newstyle/build/x86_64-linux/ghc-9.2.4/haskell-coverage-0.1.0.0/hpc/vanilla/mix/haskell-coverage-0.1.0.0/ -t ./dist-newstyle/build/x86_64-linux/ghc-9.2.4/haskell-coverage-0.1.0.0/t/haskell-coverage-test/hpc/vanilla/tix/haskell-coverage-0.1.0.0/haskell-coverage-0.1.0.0.tix
         curl --location --request POST 'https://coveralls.io/api/v1/jobs' --form 'json_file=@"./coverage.json"'
