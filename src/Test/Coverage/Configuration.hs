@@ -1,21 +1,22 @@
 -- | Configuration for Haskell-Coverage
 module Test.Coverage.Configuration (Configuration(..), configurationParser) where
 
-import           Data.Char            (toLower)
-import           Options.Applicative  (Parser, ParserInfo, ReadM, fullDesc,
-                                       help, helper, info, long, metavar,
-                                       option, progDesc, readerError, short,
-                                       str, strOption, (<**>))
-import           Test.Coverage.Format (CoverageFormat (..))
-
-data Configuration = Configuration { tixPath      :: FilePath
-                                   , mixPath      :: FilePath
-                                   , outputFormat :: CoverageFormat
-                                   } deriving Show
+import           Data.Char           (toLower)
+import           Data.Text           (Text)
+import qualified Data.Text           as T
+import           Options.Applicative (Parser, ParserInfo, ReadM, argument,
+                                      fullDesc, help, helper, info, long,
+                                      metavar, option, progDesc, readerError,
+                                      short, str, strOption, value, (<**>))
+import           Test.Coverage.Types
 
 configuration :: Parser Configuration
 configuration = Configuration <$>
-  strOption
+  argument coverageFormatParser
+        ( metavar "FORMAT_TYPE"
+        <> help "Code Coverage format - one of [codecov, coveralls]")
+  <*> argument apiTokenParser (metavar "API_TOKEN" <> value Nothing)
+  <*> strOption
         ( long "tix-path"
         <> short 't'
         <> metavar "TIX_PATH"
@@ -25,18 +26,25 @@ configuration = Configuration <$>
         <> short 'm'
         <> metavar "MIX_PATH"
         <> help "Path to mix file directory")
-  <*> option coverageFormatParser
-        ( long "format-type"
-        <> short 'f'
-        <> metavar "FORMAT_TYPE"
-        <> help "Code Coverage format")
+  <*> option outputPathParser
+        ( long "output-file"
+        <> short 'o'
+        <> metavar "OUTPUT_FILE"
+        <> value Nothing
+        <> help "Path/name to output coverage file")
 
 configurationParser :: ParserInfo Configuration
 configurationParser = info (configuration <**> helper) (fullDesc <> progDesc "Translate HPC into various Code Coverage Formats")
 
-coverageFormatParser :: ReadM CoverageFormat
-coverageFormatParser = map toLower <$> str >>= \case
-  "coveralls" -> pure Coveralls
-  "codecov" -> pure Codecov
-  "other" -> pure Other
-  _ -> readerError "Invalid Coverage Format must be one of: coveralls, codecov"
+apiTokenParser :: ReadM (Maybe Text)
+apiTokenParser = Just . T.pack <$> str
+
+outputPathParser :: ReadM (Maybe String)
+outputPathParser = Just <$> str
+
+coverageFormatParser ::  ReadM CoverageFormatter
+coverageFormatParser = str >>= \s ->
+  case map toLower s of
+    "coveralls" -> pure Coveralls
+    "codecov" -> pure Codecov
+    _ -> readerError "Invalid Coverage Format must be one of: [coveralls, codecov]"
