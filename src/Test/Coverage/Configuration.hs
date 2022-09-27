@@ -1,5 +1,8 @@
 -- | Configuration for Haskell-Coverage
-module Test.Coverage.Configuration (Configuration(..), configurationParser) where
+module Test.Coverage.Configuration (
+    Configuration(..)
+  , configurationParser
+  ) where
 
 import           Data.Char           (toLower)
 import           Data.Text           (Text)

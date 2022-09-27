@@ -1,7 +1,11 @@
 {-# LANGUAGE DeriveAnyClass #-}
 -- | Provides Coveralls Code Coverage Formatting
 
-module Test.Coverage.Coveralls (formatCoveralls, CoverallsMetaData(..), SourceFile(..)) where
+module Test.Coverage.Coveralls (
+    formatCoveralls
+  , CoverallsMetaData(..)
+  , SourceFile(..)
+  ) where
 
 import           Control.Monad.Except   (MonadError (throwError))
 import           Control.Monad.IO.Class (liftIO)

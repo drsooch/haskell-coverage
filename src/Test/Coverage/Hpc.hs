@@ -1,6 +1,15 @@
 {-# LANGUAGE ViewPatterns #-}
 -- | Interacting with HPC related data structures and functions
-module Test.Coverage.Hpc (CoverageData, LineCoverage, ModuleCoverage, generateCoverageList, generateCoverageMap, readTixFile, readCoverageData, module HPC) where
+module Test.Coverage.Hpc (
+    CoverageData
+  , LineCoverage
+  , ModuleCoverage
+  , generateCoverageList
+  , generateCoverageMap
+  , readTixFile
+  , readCoverageData
+  , module HPC
+  ) where
 
 import           Control.Monad.IO.Class (MonadIO (..))
 import           Data.Aeson             (ToJSON (..))

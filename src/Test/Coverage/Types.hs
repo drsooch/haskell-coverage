@@ -1,4 +1,11 @@
-module Test.Coverage.Types (MonadCoverage, Configuration(..), CoverageFormatter(..), CoverageT, Coverage, runCoverage) where
+module Test.Coverage.Types (
+    MonadCoverage
+  , Configuration(..)
+  , CoverageFormatter(..)
+  , CoverageT
+  , Coverage
+  , runCoverage
+  ) where
 
 import           Control.Monad.Except   (ExceptT, MonadError, runExceptT)
 import           Control.Monad.IO.Class (MonadIO)

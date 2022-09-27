@@ -1,4 +1,7 @@
-module Test.Coverage (haskellCoverage, getCoverageData) where
+module Test.Coverage (
+    haskellCoverage
+  , getCoverageData
+  ) where
 
 import           Control.Exception       (SomeException, try)
 import           Control.Monad           (when)
