@@ -1,0 +1,9 @@
+packages: haskell-coverage.cabal
+
+package haskell-coverage
+  coverage: True
+  library-coverage: True
+
+package *
+  coverage: False
+  library-coverage: False

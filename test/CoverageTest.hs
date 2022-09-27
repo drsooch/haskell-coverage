@@ -1,37 +1,34 @@
 module CoverageTest (tests) where
 
-import           Common                      (testConfiguration)
+import           Common              (testConfiguration)
 import           Test.Coverage
-import           Test.Coverage.Configuration
 import           Test.Coverage.Error
-import           Test.Coverage.Hpc           (HpcData (..))
-import           Test.Tasty                  (TestTree, testGroup)
+import           Test.Coverage.Types
+import           Test.Tasty          (TestTree, testGroup)
 import           Test.Tasty.HUnit
-import           Trace.Hpc.Tix
 
 tests :: TestTree
-tests = testGroup "Coverage Tests" [hpcDataTests]
+tests = testGroup "Coverage Tests" [hpcTests]
 
-hpcDataTests :: TestTree
-hpcDataTests = testGroup "hpcData" [
+hpcTests :: TestTree
+hpcTests = testGroup "coverageData" [
   testCase "success" $ do
-      eHpcData<- runCoverageT gatherHpcData testConfiguration
-      case eHpcData of
-        Left err -> assertFailure (show err)
-        Right HpcData{..} -> do
-          let Tix tixMod = tixData
-          length tixMod @?= 20
-          length mixData @?= 20
+      eCoverageData <- runCoverage getCoverageData testConfiguration
+      case eCoverageData of
+        Left err      -> assertFailure (show err)
+        Right covData -> length covData @?= 20
   , testCase "tix failure" $ do
-       eHpcData<- runCoverageT gatherHpcData (testConfiguration { tixPath = "does-not-exist.tix" })
+       eHpcData<- runCoverage getCoverageData (testConfiguration { tixPath = "does-not-exist.tix" })
        case eHpcData of
          Left FailedToReadTixFile  -> pure ()
          Left FailedToReadMixFiles -> assertFailure "Should not have read any mix files"
+         Left _ -> assertFailure "Invalid Failure"
          Right _                   -> assertFailure "Got valid HPC Data"
   , testCase "mix failure" $ do
-       eHpcData<- runCoverageT gatherHpcData (testConfiguration { mixPath = "does/not/exist"})
+       eHpcData<- runCoverage getCoverageData (testConfiguration { mixPath = "does/not/exist"})
        case eHpcData of
          Left FailedToReadMixFiles -> pure ()
          Left FailedToReadTixFile -> assertFailure "Should not have failed on tix file"
+         Left _ -> assertFailure "Invalid Failure"
          Right _                   -> assertFailure "Got valid HPC Data"
   ]

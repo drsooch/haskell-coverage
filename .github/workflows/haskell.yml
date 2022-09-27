@@ -37,7 +37,13 @@ jobs:
       run: |
         cabal update
         cabal build --only-dependencies --enable-tests --enable-benchmarks
-    - name: Build
+    - name: Build and Install Haskell-Coverage
       run: cabal build --enable-tests --enable-benchmarks all
     - name: Run tests
       run: cabal test all
+    - name: Install executable
+      run: cabal install --overwrite-policy=always
+    - name: Send Coveralls data
+      run: |
+        $HOME/.cabal/bin/haskell-coverage coveralls ${{ secrets.COVERALLS_TOKEN }} -o coverage.json -m ./dist-newstyle/build/x86_64-linux/ghc-9.2.4/haskell-coverage-0.1.0.0/hpc/vanilla/mix/haskell-coverage-0.1.0.0/ -t ./dist-newstyle/build/x86_64-linux/ghc-9.2.4/haskell-coverage-0.1.0.0/t/haskell-coverage-test/hpc/vanilla/tix/haskell-coverage-0.1.0.0/haskell-coverage-0.1.0.0.tix
+        curl --location --request POST 'https://coveralls.io/api/v1/jobs' --form 'json_file=@"./coverage.json"'
