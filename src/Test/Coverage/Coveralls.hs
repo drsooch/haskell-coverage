@@ -19,6 +19,7 @@ import qualified Data.Text              as T
 import qualified Data.Text.Encoding     as T
 import           GHC.Generics           (Generic)
 import           Test.Coverage.Error
+import           Test.Coverage.Git
 import           Test.Coverage.Hpc
 import           Test.Coverage.Types
 
@@ -46,7 +47,7 @@ data CoverallsMetaData = CoverallsMetaData { repo_token           :: Text
                                            , source_files         :: [SourceFile]
                                            , parallel             :: Maybe Bool
                                            , flag_name            :: Maybe Text
-                                           , git                  :: Maybe Text
+                                           , git                  :: Maybe GitMetaData
                                            , commit_sha           :: Maybe Text
                                            , run_at               :: Maybe Text
                                            } deriving (Generic, ToJSON)
@@ -90,7 +91,8 @@ formatCoveralls :: MonadCoverage m => CoverageData -> m CoverallsMetaData
 formatCoveralls covData = do
   source_files <- mapM formatFile covData
   metaData <- coverallsMetaData
-  pure $ metaData { source_files = source_files }
+  git <- gitMetaData
+  pure $ metaData { source_files = source_files, git = git }
 
 -- | Generate metadata for Coveralls
 coverallsMetaData :: MonadCoverage m => m CoverallsMetaData

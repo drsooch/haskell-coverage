@@ -21,10 +21,11 @@ library
     import:           warnings
     exposed-modules:  
         Test.Coverage
-        Test.Coverage.Configuration
-        Test.Coverage.Error
-        Test.Coverage.Coveralls
         Test.Coverage.Codecov
+        Test.Coverage.Configuration
+        Test.Coverage.Coveralls
+        Test.Coverage.Error
+        Test.Coverage.Git
         Test.Coverage.Hpc
         Test.Coverage.Types
     -- other-modules:
