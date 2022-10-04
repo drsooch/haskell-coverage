@@ -3,30 +3,43 @@ module Test.Coverage (
   , getCoverageData
   ) where
 
-import           Control.Exception       (SomeException, try)
-import           Control.Monad           (when)
-import           Control.Monad.Except    (throwError)
-import           Control.Monad.IO.Class  (liftIO)
-import           Control.Monad.Reader    (asks)
+import           Control.Exception       (IOException, SomeException, try)
+import           Control.Monad           (unless, when)
+import           Control.Monad.Except    (MonadError, throwError)
+import           Control.Monad.IO.Class  (MonadIO, liftIO)
+import           Control.Monad.Reader    (ask, asks)
 import           Data.Aeson              (encodeFile)
-import           System.Directory        (getTemporaryDirectory)
-import           System.FilePath         ((</>))
 import           Test.Coverage.Coveralls
 import           Test.Coverage.Error
 import           Test.Coverage.Hpc
 import           Test.Coverage.Types
 
+-- | Attempt to convert HPC to a Coverage Provider and either send this report to the Provider or write it to a file
 haskellCoverage :: Configuration -> IO (Either CoverageError ())
 haskellCoverage = runCoverage haskellCoverage'
 
 haskellCoverage' :: MonadCoverage m => m ()
 haskellCoverage' = do
   coverageData <- getCoverageData
-  formatResult <- formatCoverage coverageData
-  outputFile <- asks outputFile
-  case outputFile of
-    Nothing -> liftIO getTemporaryDirectory >>= \dir -> liftIO $ encodeFile (dir </> "coverage.json") formatResult
-    Just fp -> liftIO $ encodeFile fp formatResult
+  coverageReport <- formatCoverage coverageData
+  outputFile <- resolveOutputPath
+  writeCoverageReport outputFile coverageReport
+  Configuration{dryRun} <- ask
+  unless dryRun $ sendCoverageReport outputFile
+
+-- | Send a CoverageReport to a Coverage Provider
+sendCoverageReport :: MonadCoverage m => FilePath -> m ()
+sendCoverageReport fp = asks outputFormat >>= \case
+  Coveralls -> sendReportToCoveralls fp
+  Codecov   -> throwError CodecovUnsupported
+
+-- | Encode and Output the Coverage Report
+writeCoverageReport :: (MonadIO m, MonadError CoverageError m) => FilePath -> CoverallsMetaData -> m ()
+writeCoverageReport fp cmd = do
+  eResult <- liftIO $ try $ encodeFile fp cmd
+  case eResult of
+    Left (e :: IOException) -> throwError $ IOError e
+    Right _                 -> pure ()
 
 -- | Read the Tix File from the provided path
 getTixData :: MonadCoverage m => m Tix

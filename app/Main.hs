@@ -11,4 +11,4 @@ main = do
   result <- haskellCoverage config
   case result of
     Left err -> print err
-    _        -> print "Success"
+    _        -> pure ()

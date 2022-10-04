@@ -10,7 +10,8 @@ import qualified Data.Text           as T
 import           Options.Applicative (Parser, ParserInfo, ReadM, argument,
                                       fullDesc, help, helper, info, long,
                                       metavar, option, progDesc, readerError,
-                                      short, str, strOption, value, (<**>))
+                                      short, str, strOption, switch, value,
+                                      (<**>))
 import           Test.Coverage.Types
 
 configuration :: Parser Configuration
@@ -35,6 +36,10 @@ configuration = Configuration <$>
         <> metavar "OUTPUT_FILE"
         <> value Nothing
         <> help "Path/name to output coverage file")
+  <*> switch
+        (long "dry-run"
+        <> short 'd'
+        <> help "Produce Coverage Report only (don't send to the Coverage Provider)")
 
 configurationParser :: ParserInfo Configuration
 configurationParser = info (configuration <**> helper) (fullDesc <> progDesc "Translate HPC into various Code Coverage Formats")
