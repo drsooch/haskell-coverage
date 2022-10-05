@@ -3,21 +3,29 @@
 
 module Test.Coverage.Coveralls (
     formatCoveralls
+  , sendReportToCoveralls
   , CoverallsMetaData(..)
   , SourceFile(..)
   ) where
 
-import           Control.Monad.Except   (MonadError (throwError))
-import           Control.Monad.IO.Class (liftIO)
-import           Control.Monad.Reader   (asks)
-import           Data.Aeson             (ToJSON)
-import qualified Data.ByteString        as SB
-import qualified Data.ByteString.Lazy   as LB
-import           Data.Digest.Pure.MD5   (md5)
-import           Data.Text              (Text)
-import qualified Data.Text              as T
-import qualified Data.Text.Encoding     as T
-import           GHC.Generics           (Generic)
+import           Control.Monad                         (unless)
+import           Control.Monad.Except                  (MonadError (throwError))
+import           Control.Monad.IO.Class                (MonadIO, liftIO)
+import           Control.Monad.Reader                  (asks)
+import           Data.Aeson                            (ToJSON)
+import qualified Data.ByteString                       as SB
+import qualified Data.ByteString.Lazy                  as LB
+import           Data.Digest.Pure.MD5                  (md5)
+import           Data.Text                             (Text)
+import qualified Data.Text                             as T
+import qualified Data.Text.Encoding                    as T
+import           GHC.Generics                          (Generic)
+import           Network.HTTP.Client                   (httpLbs, newManager,
+                                                        parseRequest_,
+                                                        responseStatus)
+import           Network.HTTP.Client.MultipartFormData (formDataBody, partFile)
+import           Network.HTTP.Client.TLS               (tlsManagerSettings)
+import           Network.HTTP.Types                    (statusIsSuccessful)
 import           Test.Coverage.Error
 import           Test.Coverage.Git
 import           Test.Coverage.Hpc
@@ -85,6 +93,16 @@ data SourceFile = SourceFile { name          :: Text
                              , source        :: Maybe Text
                              } deriving (Generic, ToJSON)
 
+-- | Send Coverage data through the Coveralls API
+sendReportToCoveralls :: (MonadIO m, MonadError CoverageError m) => FilePath -> m ()
+sendReportToCoveralls fp = do
+  manager <- liftIO $ newManager tlsManagerSettings
+  let request = parseRequest_ "POST https://coveralls.io/api/v1/jobs"
+  request'  <- formDataBody [partFile "json_file" fp] request
+  liftIO $ print request'
+  response <- liftIO $ httpLbs request' manager
+  unless (statusIsSuccessful $ responseStatus response) $ throwError $ NetworkError (T.pack $ show $ responseStatus response)
+
 
 -- | Construct a Coveralls API record
 formatCoveralls :: MonadCoverage m => CoverageData -> m CoverallsMetaData
@@ -104,7 +122,7 @@ coverallsMetaData = do
 -- | Translate a single ModuleCoverage into a SourceFile
 -- This function does a lot of text manipulation (conversion from ByteString to String to Text etc)
 -- and room for improvement is available
-formatFile :: MonadCoverage m => ModuleCoverage -> m SourceFile
+formatFile :: MonadIO m => ModuleCoverage -> m SourceFile
 formatFile modCov@(_, Mix fp _ _ _ _) = do
   fileContents <- liftIO $ LB.readFile fp
   -- Lazy ByteString -> String -> Text (OH MY!)

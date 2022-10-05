@@ -27,7 +27,7 @@ fi
 hpc map --exclude=Main --exclude=CoverageTest --exclude=HpcTest --exclude=Common --output=$TEST_TIX $TEST_TIX
 
 # run the executable on the test tix file
-$EXE_LOC coveralls "$1" -t $TEST_TIX -m $MIX_PATH
+$EXE_LOC coveralls "$1" -t $TEST_TIX -m $MIX_PATH --dry-run
 
 # Remove app/Main.hs module
 hpc map --exclude=Main --output=$EXE_TIX $EXE_TIX
