@@ -1,10 +1,9 @@
 cabal-version:      3.4
 name:               haskell-coverage
 version:            0.1.0.0
-synopsis:
-    Translate Haskell HPC format into various code coverage formats
+synopsis: Translate Haskell HPC format into various code coverage formats
 
--- description:
+description: Providing an up-to-date program to convert HPC into various code coverage formats. Currently, only Coveralls is supported, but potentially other formats will be supported.
 license:            MIT
 license-file:       LICENSE
 author:             Nick Suchecki
@@ -14,11 +13,11 @@ category:           Testing
 build-type:         Simple
 extra-doc-files:    CHANGELOG.md
 
-common warnings
+common coverage-options
     ghc-options: -Wall
 
 library
-    import:           warnings
+    import:           coverage-options
     exposed-modules:  
         Test.Coverage
         Test.Coverage.Codecov
@@ -28,7 +27,6 @@ library
         Test.Coverage.Git
         Test.Coverage.Hpc
         Test.Coverage.Types
-    -- other-modules:
 
     build-depends:
         base                    ^>=4.16.3.0
@@ -56,7 +54,7 @@ library
         RecordWildCards
 
 executable haskell-coverage
-    import:           warnings
+    import:           coverage-options
     main-is:          Main.hs
     build-depends:
         base ^>=4.16.3.0
@@ -70,7 +68,7 @@ executable haskell-coverage
         LambdaCase
 
 test-suite haskell-coverage-test
-    import:           warnings
+    import:           coverage-options
     type:             exitcode-stdio-1.0
     main-is:          Main.hs
     other-modules:

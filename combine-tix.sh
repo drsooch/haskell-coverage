@@ -1,5 +1,7 @@
 #! /bin/sh
 
+##### NOTE: This assumes the test-suite, exe, and lib are build with coverage enabled
+
 VERSION=haskell-coverage-0.1.0.0
 
 CABAL_DIST_PREFIX=dist-newstyle/build/x86_64-linux/ghc-9.2.4/$VERSION
