@@ -5,8 +5,71 @@
 `haskell-coverage` aims to provide an up-to-date executable that translates Haskell's HPC format into various code coverage formats.
 
 ## In-Progress Formats
-- `coveralls` - [homepage](https://coveralls.io/)
 - `codecov` - [homepage](https://about.codecov.io/)
 
 ## Supported Formats
- - NA
+- `coveralls` - [homepage](https://coveralls.io/)
+
+## Installation
+
+``` sh
+cabal install haskell-coverage
+```
+
+## Usage
+
+`haskell-coverage` provides generic help text:
+
+```
+Usage: haskell-coverage FORMAT_TYPE [API_TOKEN] (-t|--tix-path TIX_PATH)
+                        (-m|--mix-path MIX_PATH) [-o|--output-file OUTPUT_FILE]
+                        [-d|--dry-run]
+
+  Translate HPC into various Code Coverage Formats
+
+Available options:
+  FORMAT_TYPE              Code Coverage format - one of [codecov, coveralls]
+  -t,--tix-path TIX_PATH   Path to tix file directory
+  -m,--mix-path MIX_PATH   Path to mix file directory
+  -o,--output-file OUTPUT_FILE
+                           Path/name to output coverage file
+  -d,--dry-run             Produce Coverage Report only (don't send to the
+                           Coverage Provider)
+  -h,--help                Show this help text
+```
+
+Generating coverage for coveralls would look like the following:
+
+``` sh
+haskell-coverage coveralls <API_TOKEN> -t /path/to/tix-file -m /path/to/mix-directory -o coverage.json
+```
+
+## Finding your Tix File and Mix Path
+
+#### Cabal
+
+These paths aren't always accurate depending on how the tix file is generated.
+
+Assuming the following is run in a cabal project: `cabal test --enable-coverage`
+The tix file can be found along this path: `/path/to/project/dist-newstyle/build/$arch/$ghc-version/package-0.1.0.0/hpc/vanilla`.
+Underneath this directory you will find `mix/` and `tix/` directories.
+
+Assuming the package name `package-0.1.0.0`, your tix file will be at `tix/package-0.1.0.0/package.tix`
+
+The corresponding mix directory will be located here `mix/package-0.1.0.0`. **NOTE** there is a secondary directory underneath called something like `package-0.1.0.0/package-0.1.0.0-inplace`.
+The `inplace` directory is what `haskell-coverage` is going to look for so make sure not to descend too far.
+
+#### Stack
+
+Assuming the following is run in a stack project `stack test --coverage`
+
+The tix file can be found at this path `$(stack path --local-hpc-root)/package/package-test-suite-name/package.tix`
+
+Mysteriously, the mix files are located here: `path/to/package/.stack-work/dist/$arch/$cabal-version/hpc/`.
+Don't pass the full path to the mix files (should be under `package-$hash`).
+
+## Troubleshooting
+
+Error reporting is not particularly graceful in `haskell-coverage` yet.
+Your best bet if you get failures is to run one of the `hpc` commands with similar inputs.
+This generally outputs an error message that may help fix the issue.
