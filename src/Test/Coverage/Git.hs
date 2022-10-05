@@ -35,11 +35,13 @@ import           System.Process.Typed   (ExitCode (..), readProcessStdout,
         }
 -}
 
+-- | Top Level Git Information specific to the current project
 data GitMetaData = GitMetaData { head    :: GitHead
                                , branch  :: Text
                                , remotes :: [GitRemote]
                                } deriving (Generic, ToJSON)
 
+-- | Git information for current commit
 data GitHead = GitHead { id              :: Text
                        , author_name     :: Text
                        , author_email    :: Text
@@ -48,12 +50,14 @@ data GitHead = GitHead { id              :: Text
                        , message         :: Text
                        } deriving (Generic, ToJSON)
 
+-- | List of Git Remotes
 data GitRemote = GitRemote { name :: Text
                            , url  :: Text
                            } deriving (Generic, ToJSON)
 
 -- TODO: Make this work with CIs as well
 
+-- | Produce GitMetaData for current project
 gitMetaData :: MonadIO m => m (Maybe GitMetaData)
 gitMetaData = do
   head_ <- gitHead

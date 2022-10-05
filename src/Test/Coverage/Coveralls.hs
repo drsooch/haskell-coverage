@@ -47,6 +47,7 @@ import           Test.Coverage.Types
         }
 -}
 
+-- | Top Level of the Coveralls API
 data CoverallsMetaData = CoverallsMetaData { repo_token           :: Text
                                            , service_name         :: Text
                                            , service_number       :: Maybe Text
@@ -86,6 +87,7 @@ defaultCoverallsMetaData = CoverallsMetaData { repo_token           = ""
         }
 -}
 
+-- | Individual Haskell Source File with coverage data
 data SourceFile = SourceFile { name          :: Text
                              , source_digest :: Text
                              , coverage      :: [LineCoverage]
@@ -102,7 +104,6 @@ sendReportToCoveralls fp = do
   liftIO $ print request'
   response <- liftIO $ httpLbs request' manager
   unless (statusIsSuccessful $ responseStatus response) $ throwError $ NetworkError (T.pack $ show $ responseStatus response)
-
 
 -- | Construct a Coveralls API record
 formatCoveralls :: MonadCoverage m => CoverageData -> m CoverallsMetaData

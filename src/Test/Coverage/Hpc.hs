@@ -21,9 +21,13 @@ import           Trace.Hpc.Mix          as HPC
 import           Trace.Hpc.Tix          as HPC
 import           Trace.Hpc.Util         as HPC
 
-type CoverageData = [(TixModule, Mix)]
+-- | List of ModuleCoverage
+type CoverageData = [ModuleCoverage]
+
+-- | Pair a specific Tix Module with it's corresponding Mix File
 type ModuleCoverage = (TixModule, Mix)
 
+-- | Indicates level of coverage for a single Haskell Source file line
 data LineCoverage = Ignored
                   | NotCovered
                   | Covered Int

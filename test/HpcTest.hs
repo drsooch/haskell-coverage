@@ -1,15 +1,15 @@
 module HpcTest (tests) where
 
-import           Common                      (loadTestCoverageData,
-                                              testConfiguration, testdataDir)
-import           Control.Exception           (SomeException, catch)
-import qualified Data.ByteString.Lazy.Char8  as LB
-import           Data.List                   (find)
-import           System.FilePath             ((<.>), (</>))
-import           Test.Coverage.Configuration (Configuration (..))
+import           Common                     (loadTestCoverageData,
+                                             testConfiguration, testdataDir)
+import           Control.Exception          (SomeException, catch)
+import qualified Data.ByteString.Lazy.Char8 as LB
+import           Data.List                  (find)
+import           System.FilePath            ((<.>), (</>))
 import           Test.Coverage.Hpc
+import           Test.Coverage.Types
 import           Test.Tasty
-import           Test.Tasty.Golden           (goldenVsString)
+import           Test.Tasty.Golden          (goldenVsString)
 import           Test.Tasty.HUnit
 
 tests :: TestTree

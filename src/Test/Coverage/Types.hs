@@ -4,7 +4,7 @@ module Test.Coverage.Types (
   , CoverageFormatter(..)
   , CoverageT
   , Coverage
-  , runCoverage
+  , runCoverageT
   ) where
 
 import           Control.Monad.Except       (ExceptT, MonadError, runExceptT)
@@ -16,28 +16,33 @@ import           System.Directory           (getTemporaryDirectory)
 import           System.FilePath            ((</>))
 import           Test.Coverage.Error
 
+-- | CoverageT monad with IO as the base monad
 type Coverage = CoverageT IO
+
+-- | MonadTransformer that implements MonadCoverage
 type CoverageT m = ReaderT Configuration (ExceptT CoverageError m)
 
-runCoverage ::  Coverage a -> Configuration -> IO (Either CoverageError a)
-runCoverage action config = runExceptT $ runReaderT action config
+-- | Run an action in the Coverage Transformer monad and produce a result
+runCoverageT :: CoverageT m a -> Configuration -> m (Either CoverageError a)
+runCoverageT action = runExceptT . runReaderT action
 
 data CoverageFormatter = Coveralls
                        | Codecov
                        deriving Show
 
-data Configuration = Configuration { outputFormat :: CoverageFormatter
-                                   , token        :: Maybe Text
-                                   , tixPath      :: FilePath
-                                   , mixPath      :: FilePath
-                                   , outputFile   :: Maybe FilePath
-                                   , dryRun       :: Bool
+data Configuration = Configuration { outputFormat :: CoverageFormatter -- ^ Which API format to produce
+                                   , token        :: Maybe Text        -- ^ API Token to use (if not given and required the program will fail)
+                                   , tixPath      :: FilePath          -- ^ Path to the tix file
+                                   , mixPath      :: FilePath          -- ^ Directory path to the mix files
+                                   , outputFile   :: Maybe FilePath    -- ^ Path to output the coverage report (defaults to /tmp/coverage.json)
+                                   , dryRun       :: Bool              -- ^ If enabled, the report will not be sent to the Provider
                                    } deriving Show
 
+-- | Coverage Monad which is mostly a wrapper around specific constraints
 class (Monad m, MonadIO m, MonadReader Configuration m, MonadError CoverageError m) => MonadCoverage m where
     resolveOutputPath :: m FilePath
 
-instance (MonadIO m, Monad m) => MonadCoverage (CoverageT m) where
+instance MonadIO m => MonadCoverage (CoverageT m) where
     resolveOutputPath = do
       Configuration{outputFile} <- ask
       case outputFile of

@@ -1,7 +1,7 @@
 module Main where
 
-import           Options.Applicative
-import           Test.Coverage               (haskellCoverage)
+import           Options.Applicative         (execParser)
+import           Test.Coverage
 import           Test.Coverage.Configuration
 
 main :: IO ()

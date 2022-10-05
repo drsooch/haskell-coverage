@@ -6,6 +6,7 @@ import           Control.Exception (Exception (displayException), IOException)
 import           Data.Text         (Text)
 import qualified Data.Text         as T
 
+-- | Errors related to the Coverage Monad
 data CoverageError = FailedToReadTixFile
                    | FailedToReadMixFiles
                    | ApiTokenRequired
