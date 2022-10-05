@@ -51,19 +51,19 @@ haskell-coverage coveralls <API_TOKEN> -t /path/to/tix-file -m /path/to/mix-dire
 These paths aren't always accurate depending on how the tix file is generated.
 
 Assuming the following is run in a cabal project: `cabal test --enable-coverage`
-The tix file can be found along this path: `/path/to/project/dist-newstyle/build/$arch/$ghc-version/package-0.1.0.0/hpc/vanilla`.
+The files can be found along this path:  `TIX_MIX_ROOT = /path/to/project/dist-newstyle/build/$arch/$ghc-version/package-0.1.0.0/hpc/vanilla`.
 Underneath this directory you will find `mix/` and `tix/` directories.
 
-Assuming the package name `package-0.1.0.0`, your tix file will be at `tix/package-0.1.0.0/package.tix`
+Assuming the package name `package-0.1.0.0`, your tix file will be at `$TIX_MIX_ROOT/tix/package-0.1.0.0/package.tix`
 
-The corresponding mix directory will be located here `mix/package-0.1.0.0`. **NOTE** there is a secondary directory underneath called something like `package-0.1.0.0/package-0.1.0.0-inplace`.
+The corresponding mix directory will be located here `$TIX_MIX_ROOT/mix/package-0.1.0.0`. **NOTE** there is a secondary directory underneath called something like `package-0.1.0.0/package-0.1.0.0-inplace`.
 The `inplace` directory is what `haskell-coverage` is going to look for so make sure not to descend too far.
 
 #### Stack
 
 Assuming the following is run in a stack project `stack test --coverage`
 
-The tix file can be found at this path `$(stack path --local-hpc-root)/package/package-test-suite-name/package.tix`
+The tix file can be found at this (run from the project root) `$(stack path --local-hpc-root)/package/package-test-suite-name/package.tix`
 
 Mysteriously, the mix files are located here: `path/to/package/.stack-work/dist/$arch/$cabal-version/hpc/`.
 Don't pass the full path to the mix files (should be under `package-$hash`).
