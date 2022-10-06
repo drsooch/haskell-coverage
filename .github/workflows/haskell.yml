@@ -1,6 +1,11 @@
 name: Build & Test
 
-on: [push, pull_request]
+on:
+  push:
+  pull_request:
+    branches:
+      - main
+
 
 permissions:
   contents: read
