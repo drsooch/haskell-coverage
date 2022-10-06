@@ -17,12 +17,13 @@ testConfiguration = Configuration { outputFormat = Coveralls
                                   , tixPath      = testdataDir </> "emulator/tix/emulator.tix"
                                   , mixPath      = testdataDir </> "emulator/mix"
                                   , outputFile   = Nothing
+                                  , dryRun       = True
                                   }
 
 {-# NOINLINE loadTestCoverageData #-}
 loadTestCoverageData :: CoverageData
 loadTestCoverageData = unsafePerformIO $ do
-  eCoverageData <-  runCoverage getCoverageData testConfiguration
+  eCoverageData <- runCoverageT parseCoverageData testConfiguration
   case eCoverageData of
         Left e        -> assertFailure $ "Could not load Test CoverageData: " <> show e
         Right covData -> pure covData

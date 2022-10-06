@@ -1,10 +1,9 @@
 cabal-version:      3.4
 name:               haskell-coverage
 version:            0.1.0.0
-synopsis:
-    Translate Haskell HPC format into various code coverage formats
+synopsis: Translate Haskell HPC format into various code coverage formats
 
--- description:
+description: Providing an up-to-date program to convert HPC into various code coverage formats. Currently, only Coveralls is supported, but potentially other formats will be supported.
 license:            MIT
 license-file:       LICENSE
 author:             Nick Suchecki
@@ -14,11 +13,17 @@ category:           Testing
 build-type:         Simple
 extra-doc-files:    CHANGELOG.md
 
-common warnings
+source-repository head
+    type: git
+    location: https://github.com/drsooch/haskell-coverage
+
+common coverage-options
+    default-language: GHC2021
+    build-depends: base ^>=4.16.3.0
     ghc-options: -Wall
 
 library
-    import:           warnings
+    import:           coverage-options
     exposed-modules:  
         Test.Coverage
         Test.Coverage.Codecov
@@ -28,11 +33,9 @@ library
         Test.Coverage.Git
         Test.Coverage.Hpc
         Test.Coverage.Types
-    -- other-modules:
 
     build-depends:
-        base                    ^>=4.16.3.0
-        , aeson
+          aeson
         , bytestring
         , Cabal
         , containers
@@ -49,28 +52,25 @@ library
         , typed-process         ^>=0.2
 
     hs-source-dirs:   src
-    default-language: GHC2021
     default-extensions:
         LambdaCase
         OverloadedStrings
         RecordWildCards
 
 executable haskell-coverage
-    import:           warnings
+    import:           coverage-options
     main-is:          Main.hs
     build-depends:
-        base ^>=4.16.3.0
-        , bytestring
+          bytestring
         , haskell-coverage
         , optparse-applicative  ^>=0.17
 
     hs-source-dirs:   app
-    default-language: GHC2021
     default-extensions:
         LambdaCase
 
 test-suite haskell-coverage-test
-    import:           warnings
+    import:           coverage-options
     type:             exitcode-stdio-1.0
     main-is:          Main.hs
     other-modules:
@@ -79,8 +79,7 @@ test-suite haskell-coverage-test
         HpcTest
 
     build-depends:
-      base                ^>=4.16.3.0
-      , aeson
+        aeson
       , bytestring
       , haskell-coverage
       , hpc
@@ -90,7 +89,6 @@ test-suite haskell-coverage-test
       , tasty-golden
 
     hs-source-dirs:   test
-    default-language: GHC2021
     default-extensions:
         LambdaCase
         RecordWildCards

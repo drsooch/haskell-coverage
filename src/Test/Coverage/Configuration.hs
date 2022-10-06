@@ -1,7 +1,6 @@
 -- | Configuration for Haskell-Coverage
 module Test.Coverage.Configuration (
-    Configuration(..)
-  , configurationParser
+  configurationParser
   ) where
 
 import           Data.Char           (toLower)
@@ -14,6 +13,7 @@ import           Options.Applicative (Parser, ParserInfo, ReadM, argument,
                                       (<**>))
 import           Test.Coverage.Types
 
+-- | Command Line Parser for a Configuration
 configuration :: Parser Configuration
 configuration = Configuration <$>
   argument coverageFormatParser

@@ -1,6 +1,6 @@
 module Test.Coverage (
     haskellCoverage
-  , getCoverageData
+  , parseCoverageData
   ) where
 
 import           Control.Exception       (IOException, SomeException, try)
@@ -15,12 +15,12 @@ import           Test.Coverage.Hpc
 import           Test.Coverage.Types
 
 -- | Attempt to convert HPC to a Coverage Provider and either send this report to the Provider or write it to a file
-haskellCoverage :: Configuration -> IO (Either CoverageError ())
-haskellCoverage = runCoverage haskellCoverage'
+haskellCoverage :: MonadIO m => Configuration -> m (Either CoverageError ())
+haskellCoverage = runCoverageT haskellCoverage'
 
 haskellCoverage' :: MonadCoverage m => m ()
 haskellCoverage' = do
-  coverageData <- getCoverageData
+  coverageData <- parseCoverageData
   coverageReport <- formatCoverage coverageData
   outputFile <- resolveOutputPath
   writeCoverageReport outputFile coverageReport
@@ -42,15 +42,15 @@ writeCoverageReport fp cmd = do
     Right _                 -> pure ()
 
 -- | Read the Tix File from the provided path
-getTixData :: MonadCoverage m => m Tix
-getTixData = asks tixPath >>= readTixFile >>= \case
+parseTixData :: MonadCoverage m => m Tix
+parseTixData = asks tixPath >>= readTixFile >>= \case
   Nothing  -> throwError FailedToReadTixFile
   Just tix -> pure tix
 
 -- | Find and Parse a Tix File and combine that information with a MixFile for each module
-getCoverageData :: MonadCoverage m => m CoverageData
-getCoverageData = do
-  tixData <- getTixData
+parseCoverageData :: MonadCoverage m => m CoverageData
+parseCoverageData = do
+  tixData <- parseTixData
   mixPath <- asks mixPath
   -- annoyingly reading mix files throws errors
   eCoverageData <- liftIO $ (try :: IO a -> IO (Either SomeException a)) $ readCoverageData [mixPath] tixData
@@ -60,6 +60,7 @@ getCoverageData = do
       when (null coverageData) $ throwError FailedToReadMixFiles
       pure coverageData
 
+-- | Produce a Coverage Report
 formatCoverage :: MonadCoverage m => CoverageData -> m CoverallsMetaData
 formatCoverage coverageData = asks outputFormat >>= \case
   Coveralls -> formatCoveralls coverageData
