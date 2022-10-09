@@ -1,5 +1,15 @@
 [![Coverage Status](https://coveralls.io/repos/github/drsooch/haskell-coverage/badge.svg?branch=main)](https://coveralls.io/github/drsooch/haskell-coverage?branch=main)
 
+[Installation](#installation)
+
+[Usage](#usage)
+
+[Finding your tix/mix files](#finding-your-tix-file-and-mix-path)
+
+[Troubleshooting](#troubleshooting)
+
+[Coverage Provider Information](#coverage-provider-information)
+
 # Haskell Coverage
 
 `haskell-coverage` aims to provide an up-to-date executable that translates Haskell's HPC format into various code coverage formats.
@@ -73,3 +83,23 @@ Don't pass the full path to the mix files (should be under `package-$hash`).
 Error reporting is not particularly graceful in `haskell-coverage` yet.
 Your best bet if you get failures is to run one of the `hpc` commands with similar inputs.
 This generally outputs an error message that may help fix the issue.
+
+## Coverage Provider Information
+
+### Coveralls
+
+Integrating `haskell-coverage` with coveralls is relatively straightforward.
+Assuming you have a repository that is already connected to Coveralls, you can either:
+- Provide the `API Token` to the command line argument 
+
+OR 
+
+- Let `haskell-coverage` query your CI environment to provide the correct information to Coveralls
+
+Regardless of which option you choose `haskell-coverage` will integrate all possible information that it can provide to Coveralls.
+
+The currently supported CI environments are:
+- TravisCI
+- Travis Pro (this is for private repos) 
+  - **NOTE** You must create an environment variable `TRAVIS_PRO` as `haskell-coverage` cannot distinguish between `travis-ci` and `travis-pro` without it
+- JenkinsCI
