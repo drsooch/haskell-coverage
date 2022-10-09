@@ -26,7 +26,7 @@ if [ $? -ne 0 ]; then
 fi
 
 # clean out test modules
-hpc map --exclude=Main --exclude=CoverageTest --exclude=HpcTest --exclude=Common --output=$TEST_TIX $TEST_TIX
+hpc map --exclude=Main --exclude=CoverageTest --exclude=HpcTest --exclude=Common --exclude=CoverallsTest --output=$TEST_TIX $TEST_TIX
 
 # run the executable on the test tix file
 $EXE_LOC coveralls "$1" -t $TEST_TIX -m $MIX_PATH --dry-run
