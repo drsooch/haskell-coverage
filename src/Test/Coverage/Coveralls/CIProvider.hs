@@ -20,7 +20,8 @@ data CIProvider = CIProvider { envFlag          :: String
                              }
 
 providers :: [CIProvider]
-providers = [travisCI, travisPro, jenkinsCI]
+-- travisPro needs to go before TravisCI
+providers = [travisPro, travisCI, jenkinsCI]
 
 travisCI, travisPro, jenkinsCI :: CIProvider
 travisCI = CIProvider "TRAVIS" "TRAVIS_BUILD_NUMBER" (Just "TRAVIS_BUILD_ID") "travis-ci"
