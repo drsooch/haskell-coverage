@@ -1,12 +1,10 @@
 -- | Testing Utilities
 module Common where
 
-import           System.FilePath     ((</>))
-import           System.IO.Unsafe    (unsafePerformIO)
+import           System.FilePath  ((</>))
+import           System.IO.Unsafe (unsafePerformIO)
 import           Test.Coverage
-import           Test.Coverage.Hpc
-import           Test.Coverage.Types
-import           Test.Tasty.HUnit    (assertFailure)
+import           Test.Tasty.HUnit (assertFailure)
 
 testdataDir :: FilePath
 testdataDir = "test/testdata"

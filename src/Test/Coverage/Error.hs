@@ -9,7 +9,7 @@ import qualified Data.Text         as T
 -- | Errors related to the Coverage Monad
 data CoverageError = FailedToReadTixFile
                    | FailedToReadMixFiles
-                   | ApiTokenRequired
+                   | NoBuildInformation
                    | CodecovUnsupported
                    | IOError IOException
                    | NetworkError Text
@@ -18,7 +18,7 @@ instance Show CoverageError where
   show = \case
     FailedToReadTixFile  -> "Failed to find/read Tix file"
     FailedToReadMixFiles -> "Failed to find/read Mix files"
-    ApiTokenRequired     -> "API Token is required"
+    NoBuildInformation   -> "Could not determine Build Information need an API token"
     CodecovUnsupported   -> "Codecov is unsupported"
     IOError e            -> displayException e
-    NetworkError x       ->  T.unpack x
+    NetworkError x       -> T.unpack x

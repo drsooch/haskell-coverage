@@ -6,8 +6,7 @@ import           Control.Exception          (SomeException, catch)
 import qualified Data.ByteString.Lazy.Char8 as LB
 import           Data.List                  (find)
 import           System.FilePath            ((<.>), (</>))
-import           Test.Coverage.Hpc
-import           Test.Coverage.Types
+import           Test.Coverage
 import           Test.Tasty
 import           Test.Tasty.Golden          (goldenVsString)
 import           Test.Tasty.HUnit

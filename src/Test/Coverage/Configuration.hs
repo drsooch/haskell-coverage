@@ -3,7 +3,6 @@ module Test.Coverage.Configuration (
   configurationParser
   ) where
 
-import           Data.Char           (toLower)
 import           Data.Text           (Text)
 import qualified Data.Text           as T
 import           Options.Applicative (Parser, ParserInfo, ReadM, argument,
@@ -51,8 +50,7 @@ outputPathParser :: ReadM (Maybe String)
 outputPathParser = Just <$> str
 
 coverageFormatParser ::  ReadM CoverageFormatter
-coverageFormatParser = str >>= \s ->
-  case map toLower s of
+coverageFormatParser = (str :: ReadM String) >>= \case
     "coveralls" -> pure Coveralls
     "codecov" -> pure Codecov
-    _ -> readerError "Invalid Coverage Format must be one of: [coveralls, codecov]"
+    _ -> readerError "Invalid Coverage Format - must be one of: [coveralls, codecov]"

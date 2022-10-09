@@ -26,11 +26,13 @@ library
     import:           coverage-options
     exposed-modules:  
         Test.Coverage
-        Test.Coverage.Codecov
         Test.Coverage.Configuration
+        Test.Coverage.Coveralls.CIProvider
+    other-modules:
+        Test.Coverage.Codecov
         Test.Coverage.Coveralls
+        Test.Coverage.Coveralls.Git
         Test.Coverage.Error
-        Test.Coverage.Git
         Test.Coverage.Hpc
         Test.Coverage.Types
 
@@ -76,6 +78,7 @@ test-suite haskell-coverage-test
     other-modules:
         Common
         CoverageTest
+        CoverallsTest
         HpcTest
 
     build-depends:
@@ -87,6 +90,7 @@ test-suite haskell-coverage-test
       , tasty
       , tasty-hunit
       , tasty-golden
+      , text
 
     hs-source-dirs:   test
     default-extensions:
