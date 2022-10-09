@@ -16,6 +16,7 @@ import           Data.Aeson                            (ToJSON)
 import qualified Data.ByteString                       as SB
 import qualified Data.ByteString.Lazy                  as LB
 import           Data.Digest.Pure.MD5                  (md5)
+import           Data.Maybe                            (isJust)
 import           Data.Text                             (Text)
 import qualified Data.Text                             as T
 import qualified Data.Text.Encoding                    as T
@@ -26,8 +27,9 @@ import           Network.HTTP.Client                   (httpLbs, newManager,
 import           Network.HTTP.Client.MultipartFormData (formDataBody, partFile)
 import           Network.HTTP.Client.TLS               (tlsManagerSettings)
 import           Network.HTTP.Types                    (statusIsSuccessful)
+import           Test.Coverage.Coveralls.CIProvider
+import           Test.Coverage.Coveralls.Git
 import           Test.Coverage.Error
-import           Test.Coverage.Git
 import           Test.Coverage.Hpc
 import           Test.Coverage.Types
 
@@ -110,15 +112,7 @@ formatCoveralls :: MonadCoverage m => CoverageData -> m CoverallsMetaData
 formatCoveralls covData = do
   source_files <- mapM formatFile covData
   metaData <- coverallsMetaData
-  git <- gitMetaData
-  pure $ metaData { source_files = source_files, git = git }
-
--- | Generate metadata for Coveralls
-coverallsMetaData :: MonadCoverage m => m CoverallsMetaData
-coverallsMetaData = do
-  token <- asks token
-  repo_token <- maybe (throwError ApiTokenRequired) return token
-  pure $ defaultCoverallsMetaData { repo_token = repo_token }
+  pure $ metaData { source_files = source_files }
 
 -- | Translate a single ModuleCoverage into a SourceFile
 -- This function does a lot of text manipulation (conversion from ByteString to String to Text etc)
@@ -135,3 +129,36 @@ formatFile modCov@(_, Mix fp _ _ _ _) = do
       source = Just source'
       coverage = generateCoverageList modCov
   pure SourceFile{..}
+
+-- | Generate metadata for Coveralls
+coverallsMetaData :: MonadCoverage m => m CoverallsMetaData
+coverallsMetaData = do
+  mToken <- asks token
+  cmd <- case mToken of
+            Nothing    -> pure defaultCoverallsMetaData
+            Just token -> pure $ defaultCoverallsMetaData { repo_token = token }
+  cmd' <- addServiceData cmd
+  cmd'' <- addGitMetaData cmd'
+  unless (hasRequiredFields cmd'') $ throwError NoBuildInformation
+  pure cmd''
+
+-- | Query the build environment and add any CI metadata
+addServiceData :: MonadIO m => CoverallsMetaData -> m CoverallsMetaData
+addServiceData cmd = liftIO $ do
+  mServiceData <- determineServiceData
+  case mServiceData of
+    Nothing -> pure cmd
+    Just (service_name, service_number, service_job_id) -> pure $ cmd { service_name = service_name
+                                                                      , service_number = Just service_number
+                                                                      , service_job_id = service_job_id}
+
+-- | Query the build environment and add any Git metadata
+addGitMetaData :: MonadIO m => CoverallsMetaData -> m CoverallsMetaData
+addGitMetaData cmd = gitMetaData >>= \git -> pure cmd { git = git }
+
+-- | Coveralls accepts EITHER a repo_token OR service_name and service_number
+-- We can mix and match the combination of the two so all we need is to verify at least ONE
+-- of those properties is true
+hasRequiredFields :: CoverallsMetaData -> Bool
+hasRequiredFields CoverallsMetaData{repo_token} | not (T.null repo_token) = True
+hasRequiredFields CoverallsMetaData{service_name, service_number} = isJust service_number && not (T.null service_name)

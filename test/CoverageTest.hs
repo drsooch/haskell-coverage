@@ -1,10 +1,8 @@
 module CoverageTest (tests) where
 
-import           Common              (testConfiguration)
+import           Common           (testConfiguration)
 import           Test.Coverage
-import           Test.Coverage.Error
-import           Test.Coverage.Types
-import           Test.Tasty          (TestTree, testGroup)
+import           Test.Tasty       (TestTree, testGroup)
 import           Test.Tasty.HUnit
 
 tests :: TestTree

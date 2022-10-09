@@ -1,5 +1,5 @@
 {-# LANGUAGE DeriveAnyClass #-}
-module Test.Coverage.Git (
+module Test.Coverage.Coveralls.Git (
     GitMetaData
   , gitMetaData
   ) where
@@ -55,7 +55,7 @@ data GitRemote = GitRemote { name :: Text
                            , url  :: Text
                            } deriving (Generic, ToJSON)
 
--- TODO: Make this work with CIs as well
+-- TODO: Make this work with CIs as well?
 
 -- | Produce GitMetaData for current project
 gitMetaData :: MonadIO m => m (Maybe GitMetaData)

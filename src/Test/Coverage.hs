@@ -1,6 +1,9 @@
 module Test.Coverage (
     haskellCoverage
   , parseCoverageData
+  , module Test.Coverage.Types
+  , module Test.Coverage.Hpc
+  , module Test.Coverage.Error
   ) where
 
 import           Control.Exception       (IOException, SomeException, try)
